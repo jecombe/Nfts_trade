@@ -1,0 +1,28 @@
+{
+  "name": "nfts_trade",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jecombe/Nfts_trade.git"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jecombe/Nfts_trade/issues"
+  },
+  "homepage": "https://github.com/jecombe/Nfts_trade#readme",
+  "dependencies": {
+    "@truffle/hdwallet-provider": "^2.1.5",
+    "dotenv": "^16.0.3",
+    "ethers": "^5.7.2",
+    "opensea-js": "^4.0.13",
+    "web3": "^1.8.2"
+  }
+}
