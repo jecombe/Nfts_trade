@@ -18,7 +18,7 @@ export default class {
         this.customHttpProvider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER);
         this.wallet = new ethers.Wallet(process.env.SECRET_KEY, this.customHttpProvider);
 
-        this.seaport = new opensea.OpenSeaPort(this.provider, {
+        this.seaport = new opensea.OpenSeaPort(this.customHttpProvider, {
             networkName: opensea.Network.Goerli
         });
         this.contractWithSigner = new ethers.Contract(seaportAddress, factoryAbi, this.wallet);
@@ -36,7 +36,7 @@ export default class {
     createOrder(order) {
         const basicOrderParameters = {
             considerationToken: order.protocolData.parameters.consideration[0].token,
-            considerationIdentifier: ethers.BigNumber.from('0'),
+            considerationIdentifier: ethers.BigNumber.from('0').toString(),
             considerationAmount: undefined,
             offerer: undefined,
             zone: order.protocolData.parameters.zone,
@@ -54,9 +54,10 @@ export default class {
             additionalRecipients: [],
             signature: undefined
         }
+
         basicOrderParameters.offerer = ethers.utils.getAddress(order.maker.address);
         basicOrderParameters.offerToken = order.protocolData.parameters.offer[0].token;
-        basicOrderParameters.offerIdentifier = ethers.BigNumber.from(order.protocolData.parameters.offer[0].identifierOrCriteria);
+        basicOrderParameters.offerIdentifier = ethers.BigNumber.from(order.protocolData.parameters.offer[0].identifierOrCriteria).toString();
         basicOrderParameters.startTime = order.listingTime;
         basicOrderParameters.endTime = order.expirationTime;
         basicOrderParameters.salt = order.protocolData.parameters.salt;
@@ -64,12 +65,12 @@ export default class {
         basicOrderParameters.signature = order.protocolData.signature;
         for (let consider of order.protocolData.parameters.consideration) {
             if (consider.recipient === basicOrderParameters.offerer) {
-                basicOrderParameters.considerationAmount = ethers.BigNumber.from(consider.startAmount);
+                basicOrderParameters.considerationAmount = ethers.BigNumber.from(consider.startAmount).toString();
                 continue;
             }
 
             basicOrderParameters.additionalRecipients.push({
-                amount: ethers.BigNumber.from(consider.startAmount),
+                amount: ethers.BigNumber.from(consider.startAmount).toString(),
                 recipient: consider.recipient
             },
             );
@@ -90,9 +91,10 @@ export default class {
         try {
             const order = await this.getOrder('ask', tokenId, collectionAddr)
             const orderPayload = this.createOrder(order)
-            const response = await this.sendOrder(orderPayload, order.currentPrice)
-            console.log("transaction pending: ", response.hash);
-            return response.wait();
+            console.log(orderPayload);
+            // const response = await this.sendOrder(orderPayload, order.currentPrice)
+            // console.log("transaction pending: ", response.hash);
+            // return response.wait();
         } catch (error) {
             console.log(error);
         }
